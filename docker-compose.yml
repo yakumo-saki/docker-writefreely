@@ -1,10 +1,10 @@
 version: "3"
 services:
   web:
-    build: .
+    image: yakumosaki/writefreely
     volumes:
-      - "web-data:/go/src/app"
-      - "./config.ini.example:/go/src/app/config.ini"
+      - ./config.ini:/go/config.ini
+      - ./keys:/go/keys
     ports:
       - "8080:8080"
     networks:
@@ -15,8 +15,8 @@ services:
   db:
     image: "mariadb:latest"
     volumes:
-      - "./schema.sql:/tmp/schema.sql"
-      - db-data:/var/lib/mysql/data
+      - ./schema.sql:/tmp/schema.sql:ro
+      - db-data:/var/lib/mysql
     networks:
       - writefreely
     environment:
@@ -26,8 +26,14 @@ services:
 
 volumes:
   web-data:
+    driver_opts:
+      type: none
+      device: /opt/docker/writefreely/web
+      o: bind
   db-data:
-
+    driver_opts:
+      type: none
+      device: /opt/docker/writefreely/db
+      o: bind
 networks:
   writefreely:
-
